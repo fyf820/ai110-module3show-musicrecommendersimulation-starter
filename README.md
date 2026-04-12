@@ -135,8 +135,45 @@ Example:
 Describe your scoring logic in plain language.
 
 - What features of each song does it consider
+  genre — the musical category (pop, lofi, rock, etc.)
+  mood — the emotional tone (happy, chill, intense, etc.)
+  energy — a number from 0 to 1 representing how high-energy the track feels
+  acousticness — a number from 0 to 1 representing how acoustic (vs. electronic) the track sounds
+
 - What information about the user does it use
+  favorite_genre — the genre the user prefers most
+  favorite_mood — the mood the user is looking for
+  target_energy — the energy level the user wants (e.g., 0.8 for a high-energy workout)
+  likes_acoustic — a true/false flag for whether the user prefers acoustic sounds
+
 - How does it turn those into a number
+  Each feature contributes a partial score, for genre and mood, it will be count as 1 if it matches favorite_genre/mood， otherwise it would be 0. For energy, score would be 1 - |target_energy - song.energy|. If the likes_acoustic is true, acousticness score = song.acousticness; if false, acousticness score = 1 - song.acousticness.
+
+  
+  After the user input the features, recommender will compute each song's score using this weighted rule:  score = (genre_match × 0.25) + (mood_match × 0.35) + (1 − |target_energy − song.energy|) × 0.30 + (1 − song.acousticness) × 0.10. Once every song has a score, the list is sorted from highest to lowest. The top K songs from that sorted list are returned as the final recommendations.
+
+
+  The flowchart code in Mermaid will be:
+  ```
+  flowchart TD
+    A([User Profile\ngenre · mood · energy · likes_acoustic]) --> B[Load songs.csv]
+    B --> C[Pick next song]
+
+    C --> D{More songs?}
+    D -- Yes --> E[Compute 4 sub-scores]
+    E --> F[genre × 0.25\nmood × 0.35\nenergy × 0.30\nacoustic × 0.10]
+    F --> G[Sum → total score]
+    G --> H[Append song + score to list]
+    H --> C
+    D -- No --> I[Sort list by score descending]
+    I --> J([Return top K recommendations])
+
+  ```
+
+There are some potential biases:
+  1. Binary cliff edge for genre and mood, one label mismatch wipes out 25–35% of the total score instantly.
+  2. The ranking is largely decided before energy or acousticness because the top 0.60 of the score range is locked behind genre and mood
+  3. Small dataset amplifies everything, the top spot is nearly predetermined for this small database
 
 Try to avoid code in this section, treat it like an explanation to a non programmer.
 
@@ -209,3 +246,5 @@ A few sentences about what you learned:
 - How did building this change how you think about real music recommenders
 - Where do you think human judgment still matters, even if the model seems "smart"
 
+How it looks like:
+![alt text](image.png)
