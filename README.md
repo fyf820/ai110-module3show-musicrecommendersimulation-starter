@@ -80,6 +80,10 @@ There are some potential biases:
 ![alt text](image-2.png)
 ![alt text](image-3.png)
 
+## Challenge 4
+Now the output looks like below:
+![alt text](image-4.png)
+
 ## Getting Started
 
 ### Setup
