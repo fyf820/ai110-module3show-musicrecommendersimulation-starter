@@ -75,7 +75,7 @@ There are some potential biases:
 ## How it looks like:
 ![alt text](image.png)
 
-##Terminal output of profiles':
+## Terminal output of profiles:
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 ![alt text](image-3.png)
